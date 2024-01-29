@@ -4,21 +4,8 @@
 
 namespace s3d::Platform::Web::IndexedDB
 {
-	namespace detail
+	inline void InitAsync(FilePathView path)
 	{
-		AsyncTask<bool> SyncFSAsync(bool populate);
-	}
-
-	[[nodiscard]]
-	inline AsyncTask<bool> LoadAsync()
-	{
-		return detail::SyncFSAsync(true);
-	}
-
-	[[nodiscard]]
-	inline AsyncTask<bool> SaveAsync()
-	{
-		return detail::SyncFSAsync(false);
+		IndexedDB::InitAsync({ path });
 	}
 }
-

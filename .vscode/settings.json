@@ -1,6 +1,9 @@
 {
     "files.associations": {
         "*.ipp": "cpp",
-        "future": "cpp"
+        "future": "cpp",
+        "initializer_list": "cpp",
+        "locale": "cpp",
+        "string": "cpp"
     }
 }
