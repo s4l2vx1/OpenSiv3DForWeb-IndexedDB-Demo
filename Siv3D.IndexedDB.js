@@ -6,17 +6,17 @@ mergeInto(LibraryManager.library, {
     siv3dMountIDBFS__sig: "vi",
     siv3dMountIDBFS__deps: [ "$FS" ],
 
-    __asyncjs__siv3dSyncFSAsync: function(populate) {
+    siv3dSyncFSAsync: function(populate, promise) {
         FS.syncfs
         (
             populate,
             function(err)
             {
-                _siv3dSyncFSCallback(!err);
+                _siv3dSyncFSCallback(promise, !err);
                 _siv3dMaybeAwake();
             }
         );
     },
-    __asyncjs__siv3dSyncFSAsync__sig: "vi",
-    __asyncjs__siv3dSyncFSAsync__deps: [ "$FS", "siv3dMaybeAwake", "siv3dSyncFSCallback" ],
+    siv3dSyncFSAsync__sig: "vii",
+    siv3dSyncFSAsync__deps: [ "$FS", "siv3dMaybeAwake", "siv3dSyncFSCallback" ],
 });

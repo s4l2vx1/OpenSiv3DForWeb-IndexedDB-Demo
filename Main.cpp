@@ -19,8 +19,6 @@ static int32 LoadScore(const FilePathView path)
 
 		// スコアを読み込む
 		reader(score);
-
-		Print << U"スコア: {} 点"_fmt(score);
 	}
 	else
 	{
@@ -48,55 +46,31 @@ void Main()
 {
 	const Font font{ 30 };
 
-	// ディレクトリをマウントし、SaveDirectory内のデータを非同期でロードする
-	Platform::Web::IndexedDB::InitAsync(SaveDirectory);
+	// IndexedDB を常に最新の状態にする非同期タスク
+	AsyncTask<bool> syncTask;
 
-	// ロードが完了するまで待機する
-	Platform::Web::IndexedDB::AwaitSyncResult();
+	// SaveDirectory内のデータをIndexedDBから非同期で読み込む
+	syncTask = Platform::Web::IndexedDB::InitAsync(SaveDirectory);
+
+	// 読み込みが完了するまで待つ
+	Platform::Web::System::AwaitAsyncTask(syncTask);
 
 	// スコア
 	int32 score = LoadScore((SaveDirectory + SaveFilePath));
-
-	bool saveAlways = false;
-
-	int32 scoreAtLastSave = score;
 
 	while (System::Update())
 	{
 		font(score).drawAt(Scene::Center());
 
-		SimpleGUI::CheckBoxAt(saveAlways, U"Save always", Scene::Center() + Vec2(0, 80));
-
 		// 毎フレーム 1 点ずつスコアが増える
 		++score;
 
-		if(saveAlways) // 常にセーブする
+		if ((not syncTask.isValid()) // タスクが空いているか
+			|| syncTask.isReady()) // タスクが完了していれば
 		{
-			// 進行中のセーブが無く、セーブが可能な状態ならば
-			if (Platform::Web::IndexedDB::IsReady())
-			{
-				SaveScore((SaveDirectory + SaveFilePath), score);
-				
-				Platform::Web::IndexedDB::SaveAsync();
+			SaveScore((SaveDirectory + SaveFilePath), score);
 
-				scoreAtLastSave = score;
-			}
+			syncTask = Platform::Web::IndexedDB::SaveAsync();
 		}
-		else // 300 点ごとにセーブする
-		{
-			if (score > scoreAtLastSave + 300)
-			{
-				SaveScore((SaveDirectory + SaveFilePath), score);
-				
-				Platform::Web::IndexedDB::RequestSave();
-
-				Print << U"{} 点でセーブを要求しました"_fmt(score);
-
-				scoreAtLastSave = score;
-			}
-		}
-
-		// RequestSaveで要求されたセーブがあれば実行する
-		Platform::Web::IndexedDB::ProceedSaveAsync();
 	}
 }
