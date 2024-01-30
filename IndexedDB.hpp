@@ -2,6 +2,7 @@
 
 # include <Siv3D/AsyncTask.hpp>
 # include <Siv3D/FileSystem.hpp>
+# include <Siv3D/System.hpp>
 
 # if SIV3D_PLATFORM(WEB)
 namespace s3d::Platform::Web

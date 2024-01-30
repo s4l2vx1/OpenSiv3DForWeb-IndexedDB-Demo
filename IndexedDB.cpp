@@ -1,7 +1,5 @@
 # include <emscripten.h>
 
-# include <Siv3D.hpp>
-
 # include "IndexedDB.hpp"
 
 namespace s3d::Platform::Web::IndexedDB
