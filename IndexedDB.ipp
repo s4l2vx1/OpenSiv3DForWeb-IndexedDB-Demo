@@ -1,7 +1,5 @@
 # pragma once
 
-# include "IndexedDB.hpp"
-
 # if SIV3D_PLATFORM(WEB)
 namespace s3d::Platform::Web
 {
